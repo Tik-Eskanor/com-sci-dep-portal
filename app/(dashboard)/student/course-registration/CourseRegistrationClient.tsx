@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/set-state-in-effect */
 'use client';
 
 import { useState, useMemo, useEffect, useTransition } from 'react';
@@ -114,62 +113,15 @@ export default function CourseRegistrationClient({
   const handlePrint = () => {
     toast.info('Preparing course form for printing...');
     
-    // Attempt 1: Try printing in a dedicated clean pop-up window (bypasses iframe restrictions)
-    const printElement = document.getElementById('printable-course-form-content');
-    if (printElement) {
+    // Use direct window.print() relying on print CSS media queries
+    setTimeout(() => {
       try {
-        const printWin = window.open('', '_blank', 'width=900,height=1000');
-        if (printWin) {
-          printWin.document.write(`
-            <!DOCTYPE html>
-            <html>
-              <head>
-                <title>Course Registration Form - ${studentName} (${matricNumber})</title>
-                <meta charset="utf-8">
-                <script src="https://cdn.tailwindcss.com"></script>
-                <style>
-                  @page { size: A4 portrait; margin: 12mm; }
-                  body { font-family: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif; color: #000; background: #fff; padding: 15px; margin: 0; }
-                  .border-slate-900 { border-color: #000 !important; }
-                  .bg-slate-900 { background-color: #0f172a !important; color: #fff !important; }
-                  .text-slate-900 { color: #0f172a !important; }
-                  .bg-emerald-950 { background-color: #022c22 !important; }
-                  .text-amber-400 { color: #fbbf24 !important; }
-                  table { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 11px; }
-                  th, td { border: 1px solid #000; padding: 6px; }
-                  th { background-color: #f1f5f9; font-weight: bold; }
-                </style>
-              </head>
-              <body>
-                <div style="max-width: 800px; margin: 0 auto;">
-                  ${printElement.innerHTML}
-                </div>
-                <script>
-                  window.onload = function() {
-                    setTimeout(function() {
-                      window.focus();
-                      window.print();
-                    }, 500);
-                  };
-                </script>
-              </body>
-            </html>
-          `);
-          printWin.document.close();
-          return;
-        }
+        window.focus();
+        window.print();
       } catch {
-        // Fallback to window.print() if popup open fails
+        toast.error('Unable to trigger print dialog. Please try pressing Ctrl+P or Cmd+P.');
       }
-    }
-
-    // Attempt 2: Fallback to direct window.print()
-    try {
-      window.focus();
-      window.print();
-    } catch {
-      toast.error('Unable to trigger print dialog. Please try pressing Ctrl+P or Cmd+P.');
-    }
+    }, 100);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -341,13 +293,15 @@ export default function CourseRegistrationClient({
                   Preview Form On-Screen
                 </button>
 
-                <button
-                  onClick={() => setIsSubmitted(false)}
-                  className="px-6 py-3 bg-white hover:bg-slate-50 text-slate-700 text-xs font-bold rounded-xl transition-colors inline-flex items-center gap-2 border border-slate-300"
-                >
-                  <Edit3 className="w-4 h-4 text-slate-500" />
-                  Modify Registration
-                </button>
+                {registrationStatus !== 'Approved' && (
+                  <button
+                    onClick={() => setIsSubmitted(false)}
+                    className="px-6 py-3 bg-white hover:bg-slate-50 text-slate-700 text-xs font-bold rounded-xl transition-colors inline-flex items-center gap-2 border border-slate-300"
+                  >
+                    <Edit3 className="w-4 h-4 text-slate-500" />
+                    Modify Registration
+                  </button>
+                )}
               </div>
             </div>
 
@@ -425,12 +379,12 @@ export default function CourseRegistrationClient({
                             isChecked ? 'bg-blue-50/40' : ''
                           }`}
                         >
-                          <td className="px-5 py-3.5 text-center" onClick={(e) => e.stopPropagation()}>
+                          <td className="px-5 py-3.5 text-center">
                             <input 
                               type="checkbox" 
-                              className="w-4 h-4 rounded border-slate-300 text-[var(--color-poly-primary)] focus:ring-[var(--color-poly-primary)] cursor-pointer"
+                              className="w-4 h-4 rounded border-slate-300 text-[var(--color-poly-primary)] focus:ring-[var(--color-poly-primary)] cursor-pointer pointer-events-none"
                               checked={isChecked}
-                              onChange={() => handleToggleCourse(course.id)}
+                              readOnly
                             />
                           </td>
                           <td className="px-5 py-3.5 font-bold font-mono text-slate-900">{course.code}</td>
@@ -575,10 +529,13 @@ function PrintableCourseForm({
       <div className="flex items-start justify-between border-b-2 border-slate-900 pb-4">
         {/* Left: Emblem/Logo */}
         <div className="flex items-center gap-3">
-          <div className="w-16 h-16 rounded-full border-2 border-slate-900 p-1 flex items-center justify-center bg-emerald-950 text-amber-400 font-bold text-center shrink-0">
-            <div className="text-[9px] leading-tight uppercase font-extrabold">
-              TPI<br />1970
-            </div>
+          <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-xl border border-slate-900 p-1 flex items-center justify-center bg-white shrink-0 overflow-hidden">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img 
+              src="/poly-logo.png" 
+              alt="The Polytechnic, Ibadan Official Crest" 
+              className="w-full h-full object-contain" 
+            />
           </div>
         </div>
 

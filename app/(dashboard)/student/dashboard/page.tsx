@@ -16,7 +16,11 @@ export default async function StudentDashboard() {
     include: { 
       studentProfile: {
         include: {
-          results: true,
+          results: {
+            include: {
+              course: true
+            }
+          },
         }
       } 
     }
@@ -28,6 +32,39 @@ export default async function StudentDashboard() {
 
   const { level, academicSession } = student.studentProfile;
   const currentSemester = 'First';
+
+  // Calculate CGPA from student results if available
+  const results = student.studentProfile.results || [];
+  let latestCgpa = '--';
+  let cgpaSubtext = 'No published records yet';
+
+  if (results.length > 0) {
+    let totalQualityPoints = 0;
+    let totalUnits = 0;
+    
+    for (const r of results) {
+      if (r.grade && r.isApproved && r.course) {
+        let gradePoint = 0;
+        if (r.grade === 'A') gradePoint = 4.0;
+        else if (r.grade === 'AB') gradePoint = 3.5;
+        else if (r.grade === 'B') gradePoint = 3.25;
+        else if (r.grade === 'BC') gradePoint = 3.0;
+        else if (r.grade === 'C') gradePoint = 2.75;
+        else if (r.grade === 'CD') gradePoint = 2.5;
+        else if (r.grade === 'D') gradePoint = 2.25;
+        else if (r.grade === 'E') gradePoint = 2.0;
+        else if (r.grade === 'F') gradePoint = 0.0;
+
+        totalQualityPoints += gradePoint * r.course.creditUnits;
+        totalUnits += r.course.creditUnits;
+      }
+    }
+
+    if (totalUnits > 0) {
+      latestCgpa = (totalQualityPoints / totalUnits).toFixed(2);
+      cgpaSubtext = `Based on ${totalUnits} units passed`;
+    }
+  }
 
   // Get course registrations for current session and semester
   const registrations = await prisma.courseRegistration.findMany({
@@ -82,8 +119,8 @@ export default async function StudentDashboard() {
 
         <div className="bg-white border border-slate-200 p-5 rounded-xl shadow-sm">
           <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Latest CGPA</p>
-          <h3 className="text-2xl font-bold text-green-600">--</h3>
-          <p className="text-[10px] text-slate-400 font-medium mt-1">No previous records</p>
+          <h3 className="text-2xl font-bold text-emerald-600">{latestCgpa}</h3>
+          <p className="text-[10px] text-slate-400 font-medium mt-1">{cgpaSubtext}</p>
         </div>
 
         <div className="bg-white border border-slate-200 p-5 rounded-xl shadow-sm">
@@ -95,34 +132,43 @@ export default async function StudentDashboard() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:h-[460px]">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 min-h-[460px]">
         {/* Quick Actions (Main Content Panel) */}
         <div className="lg:col-span-8 bg-white border border-slate-200 rounded-xl flex flex-col shadow-sm">
           <div className="p-5 border-b border-slate-100 flex justify-between items-center">
             <h2 className="text-sm font-bold text-[var(--color-poly-text-heading)]">Quick Actions</h2>
           </div>
-          <div className="p-6 flex-1 overflow-hidden space-y-4">
+          <div className="p-6 flex-1 space-y-4">
             <Link href="/student/course-registration" className="flex items-center px-6 py-4 text-[var(--color-poly-text-heading)] hover:bg-slate-50 border border-slate-200 rounded-lg transition-colors group">
-              <FileText className="w-5 h-5 mr-4 text-slate-400 group-hover:text-[var(--color-poly-primary)]" />
-              <div className="flex-1">
+              <FileText className="w-5 h-5 mr-4 text-slate-400 group-hover:text-[var(--color-poly-primary)] shrink-0" />
+              <div className="flex-1 min-w-0">
                 <h4 className="text-sm font-bold group-hover:text-[var(--color-poly-primary)]">Course Registration</h4>
                 <p className="text-[10px] text-slate-500 mt-1">Register for current semester courses or print approved forms</p>
               </div>
-              <span className="text-slate-300 group-hover:text-[var(--color-poly-primary)]">&rarr;</span>
+              <span className="text-slate-300 group-hover:text-[var(--color-poly-primary)] text-lg ml-2">&rarr;</span>
             </Link>
 
             <Link href="/student/results" className="flex items-center px-6 py-4 text-[var(--color-poly-text-heading)] hover:bg-slate-50 border border-slate-200 rounded-lg transition-colors group">
-              <Calendar className="w-5 h-5 mr-4 text-slate-400 group-hover:text-[var(--color-poly-primary)]" />
-              <div className="flex-1">
+              <Calendar className="w-5 h-5 mr-4 text-slate-400 group-hover:text-[var(--color-poly-primary)] shrink-0" />
+              <div className="flex-1 min-w-0">
                 <h4 className="text-sm font-bold group-hover:text-[var(--color-poly-primary)]">Check Results</h4>
                 <p className="text-[10px] text-slate-500 mt-1">View and print approved semester results</p>
               </div>
-              <span className="text-slate-300 group-hover:text-[var(--color-poly-primary)]">&rarr;</span>
+              <span className="text-slate-300 group-hover:text-[var(--color-poly-primary)] text-lg ml-2">&rarr;</span>
+            </Link>
+
+            <Link href="/student/profile" className="flex items-center px-6 py-4 text-[var(--color-poly-text-heading)] hover:bg-slate-50 border border-slate-200 rounded-lg transition-colors group">
+              <GraduationCap className="w-5 h-5 mr-4 text-slate-400 group-hover:text-[var(--color-poly-primary)] shrink-0" />
+              <div className="flex-1 min-w-0">
+                <h4 className="text-sm font-bold group-hover:text-[var(--color-poly-primary)]">Profile & Security Settings</h4>
+                <p className="text-[10px] text-slate-500 mt-1">Manage phone number, passport photo, and change password</p>
+              </div>
+              <span className="text-slate-300 group-hover:text-[var(--color-poly-primary)] text-lg ml-2">&rarr;</span>
             </Link>
           </div>
           
-          <div className="p-4 border-t border-slate-100 bg-slate-50">
-            <p className="text-center text-[10px] text-slate-400 font-medium uppercase">Last login: Today</p>
+          <div className="p-4 border-t border-slate-100 bg-slate-50 rounded-b-xl">
+            <p className="text-center text-[10px] text-slate-400 font-medium uppercase">Institutional Session Active</p>
           </div>
         </div>
 

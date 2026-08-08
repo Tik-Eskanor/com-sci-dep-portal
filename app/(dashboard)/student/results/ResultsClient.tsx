@@ -659,10 +659,13 @@ function PrintableStatement({
       <div className="flex items-start justify-between border-b-2 border-slate-900 pb-4">
         {/* Emblem */}
         <div className="flex items-center gap-3">
-          <div className="w-16 h-16 rounded-full border-2 border-slate-900 p-1 flex items-center justify-center bg-emerald-950 text-amber-400 font-bold text-center shrink-0">
-            <div className="text-[9px] leading-tight uppercase font-extrabold">
-              TPI<br />1970
-            </div>
+          <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-xl border border-slate-900 p-1 flex items-center justify-center bg-white shrink-0 overflow-hidden">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img 
+              src="/poly-logo.png" 
+              alt="The Polytechnic, Ibadan Official Crest" 
+              className="w-full h-full object-contain" 
+            />
           </div>
         </div>
 

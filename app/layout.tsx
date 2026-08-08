@@ -12,7 +12,7 @@ export default function RootLayout({children}: {children: React.ReactNode}) {
     <html lang="en">
       <body className="min-h-screen flex flex-col" suppressHydrationWarning>
         {children}
-        <Toaster position="top-right" richColors closeButton />
+        <Toaster position="top-right" richColors closeButton duration={4000} />
       </body>
     </html>
   );

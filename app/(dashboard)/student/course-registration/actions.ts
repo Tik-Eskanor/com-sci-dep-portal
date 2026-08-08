@@ -22,6 +22,20 @@ export async function registerCourses(courseIds: string[], currentSemester: stri
 
     const { id: studentProfileId, academicSession } = student.studentProfile;
 
+    // Check if the student's registration for this semester is already approved
+    const existingApproved = await prisma.courseRegistration.findFirst({
+      where: {
+        studentId: studentProfileId,
+        academicSession,
+        semester: currentSemester as any,
+        status: 'Approved'
+      }
+    });
+
+    if (existingApproved) {
+      return { success: false, error: 'Registration for this semester is already approved and cannot be modified.' };
+    }
+
     // First delete any existing registrations for this semester/session
     // that are NOT in the new courseIds
     await prisma.courseRegistration.deleteMany({
@@ -45,7 +59,9 @@ export async function registerCourses(courseIds: string[], currentSemester: stri
             academicSession
           }
         },
-        update: {},
+        update: {
+          status: 'Pending'
+        },
         create: {
           studentId: studentProfileId,
           courseId,

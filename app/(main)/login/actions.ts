@@ -2,7 +2,6 @@
 
 import { prisma } from '@/lib/prisma';
 import { createSession } from '@/lib/session';
-import { redirect } from 'next/navigation';
 import bcrypt from 'bcryptjs';
 
 export async function login(prevState: any, formData: FormData) {
@@ -12,8 +11,6 @@ export async function login(prevState: any, formData: FormData) {
   if (!identifier || !password) {
     return { error: 'Staff ID, Matric Number, or Email and password are required.' };
   }
-
-  let redirectPath: string | null = null;
 
   try {
     // 1. Search for user by Email, Staff ID, or Student Matric Number
@@ -53,25 +50,30 @@ export async function login(prevState: any, formData: FormData) {
     }
 
     if (!isMatch) {
-      return { error: 'Invalid credentials.' };
+      return { error: 'Invalid credentials. Please check your password.' };
     }
 
-    // 3. Create session & route user based on role
+    // 3. Create session
     await createSession(user.id, user.role);
 
+    let redirectPath = '/student/dashboard';
     if (user.role === 'Admin') {
       redirectPath = '/hod/dashboard';
     } else if (user.role === 'Staff') {
       redirectPath = '/staff/dashboard';
-    } else {
-      redirectPath = '/student/dashboard';
     }
+
+    const title = user.staffProfile?.title ? `${user.staffProfile.title} ` : '';
+    const userName = `${title}${user.firstName} ${user.lastName}`.trim();
+
+    return { 
+      success: true, 
+      redirectPath,
+      userName,
+      role: user.role
+    };
   } catch (error) {
     console.error('Login error:', error);
-    return { error: 'An unexpected error occurred. Is the database connected?' };
-  }
-
-  if (redirectPath) {
-    return { success: true, redirectPath };
+    return { error: 'An unexpected error occurred. Please check database connection.' };
   }
 }

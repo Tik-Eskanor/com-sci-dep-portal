@@ -2,9 +2,19 @@ import type {NextConfig} from 'next';
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   transpilePackages: ['lucide-react'],
-  turbopack: {},
   typescript: {
     ignoreBuildErrors: false,
+  },
+  experimental: {
+    serverActions: {
+      allowedOrigins: [
+        'localhost:3000',
+        '127.0.0.1:3000',
+        '*.run.app',
+        'ais-dev-r7lwbettnpuehczdwjscqz-60511581045.europe-west2.run.app',
+        'ais-pre-r7lwbettnpuehczdwjscqz-60511581045.europe-west2.run.app',
+      ],
+    },
   },
   images: {
     remotePatterns: [

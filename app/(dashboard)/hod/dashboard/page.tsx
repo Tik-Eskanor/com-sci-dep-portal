@@ -17,7 +17,8 @@ import {
   ShieldCheck, 
   ArrowUpRight, 
   Award,
-  UserCheck
+  UserCheck,
+  Megaphone
 } from 'lucide-react';
 
 export default async function HODDashboardPage() {
@@ -529,6 +530,19 @@ export default async function HODDashboardPage() {
                     <BookOpen className="w-4 h-4" />
                   </div>
                   <span className="font-bold text-xs text-slate-800">Manage Curriculum & Courses</span>
+                </div>
+                <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-slate-600" />
+              </Link>
+
+              <Link 
+                href="/hod/announcements" 
+                className="flex items-center justify-between p-3.5 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl transition-colors group"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-rose-100 text-rose-800 rounded-lg group-hover:bg-rose-200 transition-colors">
+                    <Megaphone className="w-4 h-4" />
+                  </div>
+                  <span className="font-bold text-xs text-slate-800">Department Announcements (CRUD)</span>
                 </div>
                 <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-slate-600" />
               </Link>
