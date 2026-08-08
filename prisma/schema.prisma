@@ -1,0 +1,138 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  Student
+  Staff
+  Admin
+}
+
+enum Level {
+  ND1
+  ND2
+  HND1
+  HND2
+}
+
+enum Semester {
+  First
+  Second
+}
+
+model User {
+  id        String   @id @default(uuid())
+  role      Role     @default(Student)
+  email     String   @unique
+  password  String
+  firstName String
+  lastName  String
+  phone     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  studentProfile StudentProfile?
+  staffProfile   StaffProfile?
+}
+
+model StudentProfile {
+  id               String  @id @default(uuid())
+  userId           String  @unique
+  user             User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  matricNumber     String  @unique
+  level            Level
+  academicSession  String
+  passportPhotoUrl String?
+  results          Result[]
+  courseRegistrations CourseRegistration[]
+}
+
+model StaffProfile {
+  id              String  @id @default(uuid())
+  userId          String  @unique
+  user            User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  staffId         String  @unique
+  title           String
+  specialization  String
+  officeHours     String
+  courses         Course[]
+  announcements   Announcement[]
+  materials       LearningMaterial[]
+}
+
+model Course {
+  id          String   @id @default(uuid())
+  code        String   @unique
+  title       String
+  creditUnits Int
+  semester    Semester
+  level       Level
+  isElective  Boolean  @default(false)
+  category    String   @default("C")
+  lecturerId  String?
+  lecturer    StaffProfile? @relation(fields: [lecturerId], references: [id])
+  results     Result[]
+  materials   LearningMaterial[]
+  courseRegistrations CourseRegistration[]
+}
+
+model Result {
+  id              String  @id @default(uuid())
+  studentId       String
+  student         StudentProfile @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  courseId        String
+  course          Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  academicSession String
+  caScore         Int
+  examScore       Int
+  totalScore      Int
+  grade           String
+  gradePoint      Float
+  isApproved      Boolean @default(false)
+
+  @@unique([studentId, courseId, academicSession])
+}
+
+model Announcement {
+  id             String   @id @default(uuid())
+  title          String
+  content        String
+  authorId       String
+  author         StaffProfile @relation(fields: [authorId], references: [id])
+  publishedAt    DateTime @default(now())
+  isUrgent       Boolean  @default(false)
+  targetAudience String
+}
+
+model LearningMaterial {
+  id           String   @id @default(uuid())
+  title        String
+  description  String?
+  courseId     String
+  course       Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  uploadedById String
+  uploadedBy   StaffProfile @relation(fields: [uploadedById], references: [id])
+  fileUrl      String
+  fileType     String
+  uploadedAt   DateTime @default(now())
+}
+
+
+model CourseRegistration {
+  id              String         @id @default(uuid())
+  studentId       String
+  student         StudentProfile @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  courseId        String
+  course          Course         @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  academicSession String
+  semester        Semester
+  status          String         @default("Pending") // Pending, Approved, Rejected
+  createdAt       DateTime       @default(now())
+
+  @@unique([studentId, courseId, academicSession])
+}

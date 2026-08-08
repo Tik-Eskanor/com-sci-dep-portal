@@ -1,0 +1,61 @@
+'use client';
+
+import React, { useState } from 'react';
+import Link from 'next/link';
+import { BookOpen, LogIn, Menu, X } from 'lucide-react';
+
+export default function MainHeader() {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  return (
+    <header className="bg-[var(--color-poly-primary)] text-white sticky top-0 z-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-center h-16">
+          <div className="flex items-center gap-3">
+            <div className="bg-[var(--color-poly-secondary)] p-2 rounded-full">
+              <BookOpen className="w-6 h-6 text-[var(--color-poly-primary)]" />
+            </div>
+            <div>
+              <Link href="/" className="font-bold text-lg tracking-wide block leading-tight">
+                COMPUTER SCIENCE
+              </Link>
+              <span className="text-xs text-gray-300">The Polytechnic, Ibadan</span>
+            </div>
+          </div>
+          <nav className="hidden md:flex gap-6 items-center">
+            <Link href="/#about" className="text-sm font-medium hover:text-[var(--color-poly-secondary)] transition-colors">About</Link>
+            <Link href="/#programs" className="text-sm font-medium hover:text-[var(--color-poly-secondary)] transition-colors">Programs</Link>
+            <Link href="/#staff" className="text-sm font-medium hover:text-[var(--color-poly-secondary)] transition-colors">Staff</Link>
+            <Link href="/#contact" className="text-sm font-medium hover:text-[var(--color-poly-secondary)] transition-colors">Contact</Link>
+          </nav>
+          <div className="flex items-center gap-4">
+            <Link href="/login" className="hidden md:flex items-center gap-2 bg-[var(--color-poly-secondary)] text-[var(--color-poly-primary)] px-4 py-2 rounded-md font-semibold text-sm hover:bg-[var(--color-poly-secondary-dark)] transition-colors">
+              <LogIn className="w-4 h-4" />
+              Portal Login
+            </Link>
+            <button 
+              className="md:hidden text-white p-2"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            >
+              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      {/* Mobile Menu */}
+      {mobileMenuOpen && (
+        <div className="md:hidden bg-[var(--color-poly-primary-light)] px-4 py-4 space-y-4">
+          <Link href="/#about" onClick={() => setMobileMenuOpen(false)} className="block text-sm font-medium hover:text-[var(--color-poly-secondary)] transition-colors">About</Link>
+          <Link href="/#programs" onClick={() => setMobileMenuOpen(false)} className="block text-sm font-medium hover:text-[var(--color-poly-secondary)] transition-colors">Programs</Link>
+          <Link href="/#staff" onClick={() => setMobileMenuOpen(false)} className="block text-sm font-medium hover:text-[var(--color-poly-secondary)] transition-colors">Staff</Link>
+          <Link href="/#contact" onClick={() => setMobileMenuOpen(false)} className="block text-sm font-medium hover:text-[var(--color-poly-secondary)] transition-colors">Contact</Link>
+          <Link href="/login" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-2 bg-[var(--color-poly-secondary)] text-[var(--color-poly-primary)] px-4 py-2 rounded-md font-semibold text-sm hover:bg-[var(--color-poly-secondary-dark)] transition-colors w-fit">
+            <LogIn className="w-4 h-4" />
+            Portal Login
+          </Link>
+        </div>
+      )}
+    </header>
+  );
+}

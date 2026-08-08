@@ -1,0 +1,52 @@
+@import "tailwindcss";
+
+@theme {
+  --color-poly-primary: #0A192F;
+  --color-poly-primary-light: #0D233A;
+  --color-poly-secondary: #D4AF37;
+  --color-poly-secondary-dark: #C59B27;
+  --color-poly-bg: #F8FAFC;
+  --color-poly-card: #FFFFFF;
+  --color-poly-text-heading: #0F172A;
+  --color-poly-text-body: #334155;
+  --color-poly-success: #10B981;
+  --color-poly-alert: #EF4444;
+}
+
+body {
+  background-color: var(--color-poly-bg);
+  color: var(--color-poly-text-body);
+}
+
+@media print {
+  body {
+    background-color: white !important;
+    color: black !important;
+  }
+  
+  .print\:hidden,
+  aside,
+  header,
+  nav,
+  footer,
+  button {
+    display: none !important;
+  }
+  
+  .print\:block {
+    display: block !important;
+  }
+
+  main {
+    overflow: visible !important;
+    height: auto !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: 100% !important;
+  }
+
+  @page {
+    margin: 10mm;
+    size: A4 portrait;
+  }
+}

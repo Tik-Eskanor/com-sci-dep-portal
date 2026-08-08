@@ -1,0 +1,6 @@
+{
+  "name": "Poly Ibadan CS Portal",
+  "description": "Departmental Portal System for the Computer Science Department at The Polytechnic, Ibadan.",
+  "requestFramePermissions": ["camera", "microphone"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
