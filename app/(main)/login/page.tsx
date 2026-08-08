@@ -56,7 +56,7 @@ export default function LoginPage() {
         <div className="text-center">
           <div className="w-20 h-20 relative bg-white p-1.5 rounded-2xl shadow-sm border border-slate-200/90 mx-auto mb-4 overflow-hidden">
             <Image 
-              src="/poly-logo.png" 
+              src="/logo.jpeg" 
               alt="The Polytechnic, Ibadan Logo" 
               fill 
               className="object-contain p-1"

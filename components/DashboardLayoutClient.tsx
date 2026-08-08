@@ -53,7 +53,7 @@ export default function DashboardLayoutClient({
           <Link href="/student/dashboard" className="flex items-center gap-3 group">
             <div className="w-10 h-10 relative bg-white p-1 rounded-xl shadow-xs overflow-hidden shrink-0 border border-amber-200/50 group-hover:scale-105 transition-transform">
               <Image 
-                src="/poly-logo.png" 
+                src="/logo.jpeg" 
                 alt="The Polytechnic, Ibadan Logo" 
                 fill 
                 className="object-contain p-0.5"

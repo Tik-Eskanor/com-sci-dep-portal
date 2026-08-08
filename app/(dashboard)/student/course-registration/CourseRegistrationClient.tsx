@@ -532,7 +532,7 @@ function PrintableCourseForm({
           <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-xl border border-slate-900 p-1 flex items-center justify-center bg-white shrink-0 overflow-hidden">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img 
-              src="/poly-logo.png" 
+              src="/logo.jpeg" 
               alt="The Polytechnic, Ibadan Official Crest" 
               className="w-full h-full object-contain" 
             />

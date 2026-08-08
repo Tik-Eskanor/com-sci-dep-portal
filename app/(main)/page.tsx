@@ -48,7 +48,7 @@ export default async function LandingPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center flex flex-col items-center">
           <div className="w-24 h-24 sm:w-28 sm:h-28 relative bg-white p-2 rounded-2xl shadow-xl border-2 border-amber-300/40 mb-6 overflow-hidden transform hover:scale-105 transition-transform">
             <Image 
-              src="/poly-logo.png" 
+              src="/logo.jpeg" 
               alt="The Polytechnic, Ibadan Official Emblem" 
               fill 
               className="object-contain p-1"
